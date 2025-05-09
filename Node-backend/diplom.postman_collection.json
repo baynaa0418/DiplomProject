@@ -1,0 +1,191 @@
+{
+	"info": {
+		"_postman_id": "ebff9e52-e490-47f6-9944-a079a2973f51",
+		"name": "diplom",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "30978276",
+		"_collection_link": "https://numhospital.postman.co/workspace/682aca6e-39da-46ed-87c5-6560b961836a/collection/30978276-ebff9e52-e490-47f6-9944-a079a2973f51?action=share&source=collection_link&creator=30978276"
+	},
+	"item": [
+		{
+			"name": "patient",
+			"item": [
+				{
+					"name": "Patient list",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3ZDkxY2YyZjMwZTdlNWRjMDFmNmEwNyIsInJvbGUiOiJBZG1pbiIsImlhdCI6MTc0MzQyOTk5MCwiZXhwIjoxNzQzNTE2MzkwfQ.5qPGbnkzz-YpwH9sgQqWZWOw1gJjd24zg6oazxl8MDw",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"type\": \"Student\",  \r\n  \"register\": \"УБ12345678\",\r\n  \"address\": \"Улаанбаатар, БЗД\",\r\n  \"school\": \"ШУТИС\",\r\n  \"sisiID\": \"SISI123456\",\r\n  \"occupation\": \"Student\",\r\n  \"education\": \"University\",\r\n  \"birthOfDate\": \"2000-05-15\",\r\n  \"gender\": \"male\"\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "My Workspace\nPOST\nhttp://localhost:8000/api/patient\n567891011121234\n  \"school\": \"ШУТИС\",  \"sisiID\": \"SISI123456\",  \"occupation\": \"Student\",  \"education\": \"University\",  \"birthOfDate\": \"2000-05-15\",  \"gender\": \"male\"}{  \"type\": \"Student\",    \"register\": \"УБ12345678\",  \"address\": \"Улаанбаатар, БЗД\",\n}\n\n404\nNot Found\n3 ms\n455 B\n123456789101112\n<!DOCTYPE html><html lang=\"en\"><head>    <meta charset=\"utf-8\">    <title>Error</title></head><body>    <pre>Cannot POST /api/patient</pre></body>\n<!DOCTYPE html>\n<html lang=\"en\">\n\n<head>\n    <meta charset=\"utf-8\">\n    <title>Error</title>\n</head>\n\n<body>\n    <pre>Cannot POST /api/patient</pre>\n\n•\nOnline\n",
+							"protocol": "My Workspace\nPOST\nhttp",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"patient\n567891011121234\n  \"school\": \"ШУТИС\",  \"sisiID\": \"SISI123456\",  \"occupation\": \"Student\",  \"education\": \"University\",  \"birthOfDate\": \"2000-05-15\",  \"gender\": \"male\"}{  \"type\": \"Student\",    \"register\": \"УБ12345678\",  \"address\": \"Улаанбаатар, БЗД\",\n}\n\n404\nNot Found\n3 ms\n455 B\n123456789101112\n<!DOCTYPE html><html lang=\"en\"><head>    <meta charset=\"utf-8\">    <title>Error<",
+								"title><",
+								"head><body>    <pre>Cannot POST ",
+								"api",
+								"patient<",
+								"pre><",
+								"body>\n<!DOCTYPE html>\n<html lang=\"en\">\n\n<head>\n    <meta charset=\"utf-8\">\n    <title>Error<",
+								"title>\n<",
+								"head>\n\n<body>\n    <pre>Cannot POST ",
+								"api",
+								"patient<",
+								"pre>\n\n•\nOnline\n"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Examination",
+			"item": [
+				{
+					"name": "Create",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "treatment",
+			"item": [
+				{
+					"name": "treatmentPost",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "medicalHistory",
+			"item": [
+				{
+					"name": "PostRegister",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				},
+				{
+					"name": "GetHistory",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3ZDkxY2YyZjMwZTdlNWRjMDFmNmEwNyIsInJvbGUiOiJBZG1pbiIsImlhdCI6MTc0NDI3MDA1OSwiZXhwIjoxNzQ0MzU2NDU5fQ.QSvpIvMnymmWJSqR0WrlLS0gcANNkJhfHnZcbt9cEb4",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "[\r\n  {\r\n    \"_id\": \"6622d678b3fca61770264b91\",\r\n    \"medical_history_id\": 1001,\r\n    \"historyDate\": \"2025-04-10T00:00:00.000Z\",\r\n    \"diagnosis\": {\r\n      \"_id\": \"66163f0b2789e10c3503f301\",\r\n      \"details\": \"omitted\"\r\n    },\r\n    \"treatment\": {\r\n      \"_id\": \"66163f3b2789e10c3503f302\",\r\n      \"details\": \"omitted\"\r\n    },\r\n    \"prescription\": {\r\n      \"_id\": \"66163f5a2789e10c3503f303\",\r\n      \"details\": \"omitted\"\r\n    },\r\n    \"medicalStaff\": {\r\n      \"_id\": \"66163f742789e10c3503f304\",\r\n      \"details\": \"omitted\"\r\n    },\r\n    \"patient\": {\r\n      \"_id\": \"66163f902789e10c3503f305\",\r\n      \"details\": \"omitted\"\r\n    },\r\n    \"createdAt\": \"2025-04-10T12:00:00.000Z\",\r\n    \"updatedAt\": \"2025-04-10T12:00:00.000Z\"\r\n  }\r\n]\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8000/api/medical-history/patient/66163f902789e10c3503f305",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"medical-history",
+								"patient",
+								"66163f902789e10c3503f305"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "medicalTest",
+			"item": [
+				{
+					"name": "medicalTest_P",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "medicine",
+			"item": [
+				{
+					"name": "postMedicine",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				},
+				{
+					"name": "GetMedicine",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "auth",
+			"request": {
+				"method": "GET",
+				"header": []
+			},
+			"response": []
+		}
+	]
+}
