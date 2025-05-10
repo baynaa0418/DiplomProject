@@ -1,8 +1,8 @@
 'use client';
 import React, { useState, useEffect } from 'react';
-import { Box, Snackbar, Dialog, DialogTitle, DialogContent, DialogActions, TextField, Button, Alert } from '@mui/material';
+import { Box, Snackbar, Dialog, DialogTitle, DialogContent, DialogActions, TextField, Button, Alert, List, ListItem, ListItemText, ListItemButton, InputAdornment, Typography } from '@mui/material';
 import { useRouter } from 'next/navigation';
-import { actionOptions, diagnosisOptions } from '../../components/examination/mockdata';
+import { actionOptions, diagnosisOptions, mockPatients } from '../../components/examination/mockdata';
 import Header from '../../components/examination/Header';
 import PatientInfo from '../../components/examination/PatientInfo';
 import PatientAllergies from '../../components/examination/Allergy';
@@ -17,6 +17,7 @@ import ActionButtons from '../../components/examination/ActionButtons';
 import PatientSearchDialog from '../../components/examination/PatientSearchDialog';
 import PatientMedicalHistory from '../../components/examination/MedicalHistory';
 import AddIcon from '@mui/icons-material/Add';
+import SearchIcon from '@mui/icons-material/Search';
 
 export default function CreateExaminationPage() {
   const router = useRouter();
@@ -56,7 +57,10 @@ export default function CreateExaminationPage() {
   });
 
   const [showMedicineDialog, setShowMedicineDialog] = useState(false);
-  const [medicineForm, setMedicineForm] = useState({});
+  const [medicineSearch, setMedicineSearch] = useState('');
+  const [selectedMedicine, setSelectedMedicine] = useState(null);
+  const [medicineDosage, setMedicineDosage] = useState('');
+  const [medicineInstructions, setMedicineInstructions] = useState('');
 
   const [showAddPatientDialog, setShowAddPatientDialog] = useState(false);
   const [newPatient, setNewPatient] = useState({
@@ -69,9 +73,56 @@ export default function CreateExaminationPage() {
   });
 
   // Patients state
-  const [patients, setPatients] = useState([]);
+  const [patients, setPatients] = useState(mockPatients);
   // Examination history state
   const [examinations, setExaminations] = useState([]);
+
+  // Эмийн жагсаалт
+  const medicineList = [
+    { id: 1, name: 'Амоксициллин', category: 'Антибиотик' },
+    { id: 2, name: 'Парацетамол', category: 'Өвдөлт намдаах' },
+    { id: 3, name: 'Ибупрофен', category: 'Өвдөлт намдаах' },
+    { id: 4, name: 'Цетризин', category: 'Харшлын эсрэг' },
+    { id: 5, name: 'Омепразол', category: 'Ходоодны эм' },
+    { id: 6, name: 'Метформин', category: 'Чихрийн шижингийн эсрэг' },
+    { id: 7, name: 'Амлодипин', category: 'Цусны даралтын эм' },
+    { id: 8, name: 'Аторвастатин', category: 'Холестерины эсрэг' },
+    { id: 9, name: 'Аспирин', category: 'Цус шингэлэгч' },
+    { id: 10, name: 'Лозартан', category: 'Цусны даралтын эм' },
+  ];
+
+  // Эмийн хайлт
+  const filteredMedicines = medicineList.filter(medicine =>
+    medicine.name.toLowerCase().includes(medicineSearch.toLowerCase()) ||
+    medicine.category.toLowerCase().includes(medicineSearch.toLowerCase())
+  );
+
+  // Эм нэмэх
+  const handleAddMedicine = () => {
+    if (selectedMedicine && medicineDosage) {
+      const newMedicine = {
+        id: selectedMedicine.id,
+        name: selectedMedicine.name,
+        category: selectedMedicine.category,
+        dosage: medicineDosage,
+        instructions: medicineInstructions
+      };
+
+      setFormData(prev => ({
+        ...prev,
+        medicines: [...(prev.medicines || []), newMedicine]
+      }));
+
+      // Reset form
+      setSelectedMedicine(null);
+      setMedicineDosage('');
+      setMedicineInstructions('');
+      setShowMedicineDialog(false);
+      showNotification('Эм амжилттай нэмэгдлээ');
+    } else {
+      showNotification('Эмийн нэр болон тун оруулна уу', 'warning');
+    }
+  };
 
   // Серверээс patients fetch хийх useEffect
   useEffect(() => {
@@ -96,20 +147,31 @@ export default function CreateExaminationPage() {
 
         // URL-аас үйлчлүүлэгчийн мэдээллийг авах
         const searchParams = new URLSearchParams(window.location.search);
-        const customerId = searchParams.get('customerId');
-        const customerName = searchParams.get('customerName');
-        const customerType = searchParams.get('customerType');
-        const customerPhone = searchParams.get('customerPhone');
-
-        // Хэрэв URL-д үйлчлүүлэгчийн мэдээлэл байвал автоматаар сонгох
-        if (customerId && customerName) {
-          const customer = {
-            id: customerId,
-            name: customerName,
-            type: customerType,
-            phone: customerPhone
+        const patientId = searchParams.get('patientId') || searchParams.get('id');
+        if (patientId) {
+          // Бүх боломжит талбаруудыг унших
+          const patient = {
+            id: patientId,
+            lastName: searchParams.get('lastName') || '',
+            firstName: searchParams.get('firstName') || '',
+            registerNum: searchParams.get('registerNum') || '',
+            birthDate: searchParams.get('birthDate') || '',
+            gender: searchParams.get('gender') || '',
+            age: searchParams.get('age') || '',
+            school: searchParams.get('school') || '',
+            profession: searchParams.get('profession') || '',
+            type: searchParams.get('type') || '',
+            phone: searchParams.get('phone') || '',
+            address: searchParams.get('address') || '',
+            healthIndicators: {
+              bloodPressure: searchParams.get('bloodPressure') || '',
+              heartRate: searchParams.get('heartRate') || '',
+              temperature: searchParams.get('temperature') || '',
+              weight: searchParams.get('weight') || '',
+              height: searchParams.get('height') || '',
+            },
           };
-          handleSelectPatient(customer);
+          handleSelectPatient(patient);
         }
       } catch (error) {
         showNotification('Үйлчлүүлэгчдийн жагсаалт авахад алдаа гарлаа', 'error');
@@ -429,23 +491,55 @@ export default function CreateExaminationPage() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    await saveVitalSigns();
-    await saveDiagnosis();
-    await saveTreatment();
-    await savePrescription();
-    // Refresh examination history
-    if (selectedPatient?.id || selectedPatient?._id) {
-      const patientId = selectedPatient.id || selectedPatient._id;
-      try {
-        const response = await fetch(`http://localhost:8000/api/examination/history/${patientId}`);
-        if (response.ok) {
-          const data = await response.json();
-          setExaminations(data);
+    
+    try {
+      // Бүх форм хадгалах
+      await saveVitalSigns();
+      await saveDiagnosis();
+      await saveTreatment();
+      await savePrescription();
+
+      // Шинэ үзлэгийн мэдээллийг бүрдүүлэх
+      const newExamination = {
+        id: generateObjectId(),
+        date: formData.date,
+        patientId: selectedPatient.id || selectedPatient._id,
+        patientName: `${selectedPatient.lastName} ${selectedPatient.firstName}`,
+        vitalSigns: {
+          temperature: formData.temperature,
+          bloodPressure: formData.bloodPressure,
+          heartRate: formData.heartRate,
+          respiratoryRate: formData.respiratoryRate,
+          weight: formData.weight,
+          height: formData.height
+        },
+        diagnosis: {
+          diagnosis: formData.diagnosis,
+          diagnosisCode: formData.diagnosisCode,
+          action: formData.action,
+          actionCode: formData.actionCode,
+          notes: formData.notes
+        },
+        treatment: {
+          treatmentInstructions: formData.treatmentInstructions,
+          regimen: formData.regimen
+        },
+        prescription: {
+          medicines: formData.medicines,
+          notes: formData.prescriptionNotes
         }
-      } catch {}
+      };
+
+      // Үзлэгийн түүхэд нэмэх
+      setExaminations(prev => [newExamination, ...prev]);
+
+      showNotification('Бүх мэдээлэл амжилттай хадгалагдлаа');
+    } catch (error) {
+      console.error('Үзлэгийн мэдээлэл хадгалахад алдаа гарлаа:', error);
+      showNotification('Үзлэгийн мэдээлэл хадгалахад алдаа гарлаа', 'error');
+    } finally {
+      setLoading(false);
     }
-    showNotification('Бүх мэдээлэл амжилттай хадгалагдлаа');
-    setLoading(false);
   };
 
   const saveVitalSigns = async () => {
@@ -704,43 +798,127 @@ export default function CreateExaminationPage() {
                 onChange={handleChange} 
                 onAddMedicine={() => setShowMedicineDialog(true)} 
               />
-              <Dialog open={showMedicineDialog} onClose={() => setShowMedicineDialog(false)}>
-                <DialogTitle>Эм нэмэх</DialogTitle>
+              <Dialog 
+                open={showMedicineDialog} 
+                onClose={() => {
+                  setShowMedicineDialog(false);
+                  setSelectedMedicine(null);
+                  setMedicineDosage('');
+                  setMedicineInstructions('');
+                }}
+                maxWidth="sm"
+                fullWidth
+                PaperProps={{
+                  sx: {
+                    borderRadius: '12px',
+                    boxShadow: '0px 8px 24px rgba(0, 0, 0, 0.12)'
+                  }
+                }}
+              >
+                <DialogTitle sx={{ 
+                  display: 'flex', 
+                  justifyContent: 'space-between', 
+                  alignItems: 'center',
+                  pb: 1
+                }}>
+                  <Typography variant="h6" component="span" fontWeight={600}>
+                    Эм нэмэх
+                  </Typography>
+                </DialogTitle>
+                
                 <DialogContent>
-                  <TextField
-                    label="Эмийн нэр"
-                    value={medicineForm.name || ''}
-                    onChange={e => setMedicineForm({ ...medicineForm, name: e.target.value })}
-                    fullWidth
-                    margin="normal"
-                  />
-                  <TextField
-                    label="Тун"
-                    value={medicineForm.dosage || ''}
-                    onChange={e => setMedicineForm({ ...medicineForm, dosage: e.target.value })}
-                    fullWidth
-                    margin="normal"
-                  />
-                  <TextField
-                    label="Хэрэглэх заавар"
-                    value={medicineForm.instructions || ''}
-                    onChange={e => setMedicineForm({ ...medicineForm, instructions: e.target.value })}
-                    fullWidth
-                    margin="normal"
-                  />
+                  <Box sx={{ mb: 2 }}>
+                    <TextField
+                      fullWidth
+                      placeholder="Эм хайх..."
+                      value={medicineSearch}
+                      onChange={(e) => setMedicineSearch(e.target.value)}
+                      InputProps={{
+                        startAdornment: (
+                          <InputAdornment position="start">
+                            <SearchIcon />
+                          </InputAdornment>
+                        ),
+                      }}
+                      sx={{ mb: 2 }}
+                    />
+                    
+                    <List sx={{ 
+                      maxHeight: 300, 
+                      overflow: 'auto',
+                      border: '1px solid #eee',
+                      borderRadius: '8px'
+                    }}>
+                      {filteredMedicines.map((medicine) => (
+                        <ListItemButton
+                          key={medicine.id}
+                          selected={selectedMedicine?.id === medicine.id}
+                          onClick={() => setSelectedMedicine(medicine)}
+                          sx={{
+                            '&.Mui-selected': {
+                              bgcolor: 'primary.light',
+                              '&:hover': {
+                                bgcolor: 'primary.light',
+                              },
+                            },
+                          }}
+                        >
+                          <ListItemText
+                            primary={medicine.name}
+                            secondary={medicine.category}
+                          />
+                        </ListItemButton>
+                      ))}
+                    </List>
+                  </Box>
+
+                  {selectedMedicine && (
+                    <Box sx={{ mt: 2 }}>
+                      <TextField
+                        fullWidth
+                        label="Тун"
+                        value={medicineDosage}
+                        onChange={(e) => setMedicineDosage(e.target.value)}
+                        sx={{ mb: 2 }}
+                      />
+                      <TextField
+                        fullWidth
+                        label="Хэрэглэх заавар"
+                        value={medicineInstructions}
+                        onChange={(e) => setMedicineInstructions(e.target.value)}
+                        multiline
+                        rows={2}
+                      />
+                    </Box>
+                  )}
                 </DialogContent>
-                <DialogActions>
-                  <Button onClick={() => setShowMedicineDialog(false)}>Болих</Button>
-                  <Button
+
+                <DialogActions sx={{ px: 3, py: 2 }}>
+                  <Button 
                     onClick={() => {
-                      setFormData(prev => ({
-                        ...prev,
-                        medicines: [...(prev.medicines || []), medicineForm]
-                      }));
-                      setMedicineForm({});
                       setShowMedicineDialog(false);
+                      setSelectedMedicine(null);
+                      setMedicineDosage('');
+                      setMedicineInstructions('');
                     }}
+                    variant="outlined"
+                    sx={{ 
+                      borderRadius: '8px', 
+                      textTransform: 'none',
+                      px: 3
+                    }}
+                  >
+                    Болих
+                  </Button>
+                  <Button
+                    onClick={handleAddMedicine}
                     variant="contained"
+                    disabled={!selectedMedicine || !medicineDosage}
+                    sx={{ 
+                      borderRadius: '8px', 
+                      textTransform: 'none',
+                      px: 3
+                    }}
                   >
                     Нэмэх
                   </Button>

@@ -1,8 +1,9 @@
 import React from 'react';
-import { Box, Card, CardContent, Typography, Grid, TextField, Button, Paper } from '@mui/material';
+import { Box, Card, CardContent, Typography, Grid, TextField, Button, Paper, List, ListItem, ListItemText, ListItemButton, InputAdornment, Chip, Divider } from '@mui/material';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
+import SearchIcon from '@mui/icons-material/Search';
 
-const PrescriptionTab = ({ formData, onChange }) => {
+const PrescriptionTab = ({ formData, onChange, onAddMedicine }) => {
   return (
     <Card sx={{ 
       mb: 3, 
@@ -24,6 +25,7 @@ const PrescriptionTab = ({ formData, onChange }) => {
                   variant="outlined" 
                   size="small" 
                   startIcon={<AddCircleOutlineIcon />}
+                  onClick={onAddMedicine}
                   sx={{ 
                     borderRadius: '8px', 
                     textTransform: 'none',
@@ -36,17 +38,50 @@ const PrescriptionTab = ({ formData, onChange }) => {
                   Эм нэмэх
                 </Button>
               </Box>
-              <Paper sx={{ 
-                p: 2, 
-                bgcolor: 'white', 
-                borderRadius: 1, 
-                border: '1px dashed #ccc',
-                boxShadow: 'inset 0px 2px 4px rgba(0, 0, 0, 0.05)'
-              }}>
-                <Typography color="text.secondary" align="center">
-                  Одоогоор эмийн жор байхгүй байна
-                </Typography>
-              </Paper>
+              {formData.medicines && formData.medicines.length > 0 ? (
+                <Paper sx={{ 
+                  p: 2, 
+                  bgcolor: 'white', 
+                  borderRadius: 1,
+                  boxShadow: 'inset 0px 2px 4px rgba(0, 0, 0, 0.05)'
+                }}>
+                  {formData.medicines.map((medicine, index) => (
+                    <Box key={index}>
+                      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 1 }}>
+                        <Box>
+                          <Typography variant="subtitle2" fontWeight="600">{medicine.name}</Typography>
+                          <Typography variant="body2" color="text.secondary">{medicine.category}</Typography>
+                        </Box>
+                        <Chip 
+                          label={medicine.dosage} 
+                          size="small" 
+                          color="primary"
+                          variant="outlined"
+                          sx={{ borderRadius: '4px' }}
+                        />
+                      </Box>
+                      {medicine.instructions && (
+                        <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
+                          {medicine.instructions}
+                        </Typography>
+                      )}
+                      {index < formData.medicines.length - 1 && <Divider sx={{ my: 2 }} />}
+                    </Box>
+                  ))}
+                </Paper>
+              ) : (
+                <Paper sx={{ 
+                  p: 2, 
+                  bgcolor: 'white', 
+                  borderRadius: 1, 
+                  border: '1px dashed #ccc',
+                  boxShadow: 'inset 0px 2px 4px rgba(0, 0, 0, 0.05)'
+                }}>
+                  <Typography color="text.secondary" align="center">
+                    Одоогоор эмийн жор байхгүй байна
+                  </Typography>
+                </Paper>
+              )}
             </Grid>
             <Grid item xs={12}>
               <TextField

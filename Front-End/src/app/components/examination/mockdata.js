@@ -23,61 +23,118 @@ export const diagnosisOptions = [
     return `${timestamp}${randomPart}`;
   };
   
-  // Mock patients data with dynamic IDs
+  // Mock data for patients
   export const mockPatients = [
     {
-      _id: generateObjectId(),
-      id: 'ТАВ82520019',
-      registerNum: 'ТАВ82520019',
-      firstName: 'Дэлгэрцэцэг',
-      lastName: 'Батболд',
-      age: '38',
-      gender: 'Эмэгтэй',
-      type: 'Анхан',
-      school: 'МУИС',
-      profession: 'Эмч',
-      phone: '99887766',
-      birthDate: '1985-05-15',
-      createdAt: new Date('2024-01-15').toISOString(),
-      updatedAt: new Date('2024-01-15').toISOString()
-    },
-    {
-      _id: generateObjectId(),
-      id: 'ТАД12322020',
-      registerNum: 'ТАД12322020',
-      firstName: 'Наранчимэг',
-      lastName: 'Нямжав',
-      age: '45',
-      gender: 'Эмэгтэй',
-      type: 'Давтан',
-      school: 'МУБИС',
-      profession: 'Багш',
-      phone: '88776655',
-      birthDate: '1978-08-20',
-      createdAt: new Date('2024-01-16').toISOString(),
-      updatedAt: new Date('2024-01-16').toISOString()
-    },
-    {
-      _id: generateObjectId(),
-      id: 'ТАБ23220020',
-      registerNum: 'ТАБ23220020',
-      firstName: 'Эрдэнэ',
-      lastName: 'Батболд',
-      age: '29',
+      id: 1,
+      lastName: 'Батбаяр',
+      firstName: 'Ариунболд',
+      registerNum: 'УБ12345678',
+      birthDate: '2001/07/06',
+      age: 23,
+      type: 'Оюутан',
+      school: 'ШУТИС',
+      profession: 'Программ хөгжүүлэгч',
       gender: 'Эрэгтэй',
-      type: 'Анхан',
+      address: 'УБ, 3-р хороо, Даваа салбар, ...',
+      phone: '9921 8857',
+      healthIndicators: {
+        bloodPressure: '120/80',
+        heartRate: '72',
+        temperature: '36.6',
+        weight: '68',
+        height: '175'
+      }
+    },
+    {
+      id: 2,
+      lastName: 'Нямсүрэн',
+      firstName: 'Зоригоо',
+      registerNum: 'УБ87654321',
+      birthDate: '2001/07/06',
+      age: 23,
+      type: 'Оюутан',
+      school: 'МУИС',
+      profession: 'Эдийн засагч',
+      gender: 'Эмэгтэй',
+      address: 'Дархан, Хороолол, Гудамж, Байр, ...',
+      phone: '8015 8665',
+      healthIndicators: {
+        bloodPressure: '110/75',
+        heartRate: '68',
+        temperature: '36.4',
+        weight: '72',
+        height: '180'
+      }
+    },
+    {
+      id: 3,
+      lastName: 'Батбаяр',
+      firstName: 'Ганжигүүр',
+      registerNum: 'УБ23456789',
+      birthDate: '2001/07/06',
+      age: 23,
+      type: 'Оюутан',
       school: 'МУБИС',
-      profession: 'Инженер',
-      phone: '77665544',
-      birthDate: '1994-03-10',
-      createdAt: new Date('2024-01-17').toISOString(),
-      updatedAt: new Date('2024-01-17').toISOString()
+      profession: 'Эрх зүйч',
+      gender: 'Эрэгтэй',
+      address: 'УБ, 5-р хороо, Байр, Тоот',
+      phone: '9911 1234',
+      healthIndicators: {
+        bloodPressure: '130/85',
+        heartRate: '75',
+        temperature: '36.8',
+        weight: '80',
+        height: '178'
+      }
+    },
+    {
+      id: 4,
+      lastName: 'Батмэнд',
+      firstName: 'Мөнххүлэг',
+      registerNum: 'УБ34567890',
+      birthDate: '2001/07/06',
+      age: 23,
+      type: 'Багш',
+      school: 'МУИС',
+      profession: 'Математикийн багш',
+      gender: 'Эрэгтэй',
+      address: 'Дархан, Хороолол, Гудамж, Байр, Тоот',
+      phone: '8888 8001',
+      healthIndicators: {
+        bloodPressure: '125/82',
+        heartRate: '70',
+        temperature: '36.5',
+        weight: '75',
+        height: '172'
+      }
+    },
+    {
+      id: 5,
+      lastName: 'Лувсандорж',
+      firstName: 'Ганбаатар',
+      registerNum: 'УБ45678901',
+      birthDate: '2001/07/06',
+      age: 23,
+      type: 'Ажилтан',
+      school: 'МУИС',
+      profession: 'Санхүүгийн мэргэжилтэн',
+      gender: 'Эрэгтэй',
+      address: 'Дархан, Хороолол, Гудамж, Байр, Тоот',
+      phone: '8088 8001',
+      healthIndicators: {
+        bloodPressure: '118/78',
+        heartRate: '65',
+        temperature: '36.7',
+        weight: '70',
+        height: '176'
+      }
     }
   ];
   
   // Helper functions for mock data
   export const findPatientById = (id) => {
-    return mockPatients.find(patient => patient._id === id || patient.id === id);
+    return mockPatients.find(patient => patient.id === id);
   };
   
   export const findPatientByRegisterNum = (registerNum) => {

@@ -1,8 +1,32 @@
-import React from 'react';
-import { Box, Typography, Button, Card, CardContent, Avatar } from '@mui/material';
+import React, { useState } from 'react';
+import { 
+  Box, 
+  Typography, 
+  Card, 
+  CardContent, 
+  TextField,
+  List,
+  ListItem,
+  ListItemText,
+  ListItemButton,
+  InputAdornment,
+  Paper,
+  Divider,
+  Avatar
+} from '@mui/material';
+import SearchIcon from '@mui/icons-material/Search';
 import PersonIcon from '@mui/icons-material/Person';
 
-const PatientSelection = ({ onOpenDialog }) => {
+const PatientSelection = ({ onOpenDialog, patients = [], onSelectPatient }) => {
+  const [searchTerm, setSearchTerm] = useState('');
+
+  const filteredPatients = patients.filter(patient => {
+    const fullName = `${patient.lastName} ${patient.firstName}`.toLowerCase();
+    const registerNum = patient.registerNum?.toLowerCase() || '';
+    const searchLower = searchTerm.toLowerCase();
+    return fullName.includes(searchLower) || registerNum.includes(searchLower);
+  });
+
   return (
     <Card sx={{ 
       mb: 3, 
@@ -14,36 +38,103 @@ const PatientSelection = ({ onOpenDialog }) => {
       }
     }}>
       <CardContent sx={{ p: 3 }}>
-        <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', py: 3 }}>
-          <Avatar sx={{ 
-            width: 70, 
-            height: 70, 
-            bgcolor: 'primary.light', 
-            mb: 2,
-            boxShadow: '0px 4px 8px rgba(25, 118, 210, 0.2)'
-          }}>
-            <PersonIcon sx={{ fontSize: 40 }} />
-          </Avatar>
-          <Typography variant="h6" fontWeight="600" gutterBottom>Үйлчлүүлэгч сонгоно уу</Typography>
-          <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
+        <Box sx={{ mb: 3 }}>
+          <Typography variant="h6" fontWeight="600" gutterBottom>Үйлчлүүлэгч сонгох</Typography>
+          <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
             Үзлэг бүртгэлийн өмнө үйлчлүүлэгчийг сонгоно уу
           </Typography>
-          <Button 
-            variant="contained" 
-            color="primary"
-            onClick={onOpenDialog}
+          
+          <Box sx={{ mb: 3 }}>
+            <TextField
+              fullWidth
+              placeholder="Үйлчлүүлэгч хайх..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <SearchIcon color="action" />
+                  </InputAdornment>
+                ),
+              }}
+              sx={{
+                '& .MuiOutlinedInput-root': {
+                  borderRadius: '8px',
+                }
+              }}
+            />
+          </Box>
+
+          <Paper 
             sx={{ 
-              borderRadius: '8px', 
-              textTransform: 'none',
-              px: 4,
-              boxShadow: '0px 4px 10px rgba(25, 118, 210, 0.3)',
-              '&:hover': {
-                boxShadow: '0px 6px 15px rgba(25, 118, 210, 0.4)'
-              }
+              maxHeight: 400, 
+              overflow: 'auto',
+              border: '1px solid #eee',
+              borderRadius: '8px'
             }}
           >
-            Үйлчлүүлэгч сонгох
-          </Button>
+            {filteredPatients.length > 0 ? (
+              <List>
+                {filteredPatients.map((patient, index) => (
+                  <React.Fragment key={patient.id || patient._id}>
+                    <ListItemButton
+                      onClick={() => onSelectPatient(patient)}
+                      sx={{
+                        py: 1.5,
+                        '&:hover': {
+                          bgcolor: 'rgba(0, 0, 0, 0.04)'
+                        }
+                      }}
+                    >
+                      <Avatar 
+                        sx={{ 
+                          mr: 2, 
+                          bgcolor: 'primary.light',
+                          width: 40,
+                          height: 40
+                        }}
+                      >
+                        <PersonIcon />
+                      </Avatar>
+                      <ListItemText
+                        primary={
+                          <Typography component="span" fontWeight="500">
+                            {patient.lastName} {patient.firstName}
+                          </Typography>
+                        }
+                        secondary={
+                          <Box component="span" sx={{ display: 'block', mt: 0.5 }}>
+                            <Typography component="span" variant="body2" color="text.secondary">
+                              {patient.registerNum}
+                            </Typography>
+                            <Typography component="span" variant="body2" color="text.secondary" sx={{ mx: 1 }}>
+                              •
+                            </Typography>
+                            <Typography component="span" variant="body2" color="text.secondary">
+                              {patient.age} настай
+                            </Typography>
+                            <Typography component="span" variant="body2" color="text.secondary" sx={{ mx: 1 }}>
+                              •
+                            </Typography>
+                            <Typography component="span" variant="body2" color="text.secondary">
+                              {patient.type}
+                            </Typography>
+                          </Box>
+                        }
+                      />
+                    </ListItemButton>
+                    {index < filteredPatients.length - 1 && <Divider />}
+                  </React.Fragment>
+                ))}
+              </List>
+            ) : (
+              <Box sx={{ p: 3, textAlign: 'center' }}>
+                <Typography color="text.secondary">
+                  {searchTerm ? 'Үйлчлүүлэгч олдсонгүй' : 'Үйлчлүүлэгч байхгүй байна'}
+                </Typography>
+              </Box>
+            )}
+          </Paper>
         </Box>
       </CardContent>
     </Card>

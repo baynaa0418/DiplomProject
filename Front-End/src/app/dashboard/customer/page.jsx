@@ -288,8 +288,8 @@ export default function Customer() {
   };
   
   const handleViewDetails = (customer) => {
-    router.push(`/customer/${customer.id}`);
-    handleCloseMenu();
+    setDetailViewData(customer); // Үйлчлүүлэгчийн мэдээллийг хадгалах
+    setOpenDetailView(true); // Дэлгэрэнгүй харах цонхыг нээх
   };
   
   const handleEditChange = (e) => {
@@ -435,7 +435,6 @@ export default function Customer() {
                         size="small"
                         onClick={() => {
                           const params = new URLSearchParams({
-                            // Үйлчлүүлэгчийн үндсэн мэдээлэл
                             patientId: item.id,
                             lastName: item.lastName || '',
                             firstName: item.firstName || '',
@@ -448,33 +447,13 @@ export default function Customer() {
                             type: item.type || '',
                             phone: item.phone || '',
                             address: item.address || '',
-
-                            // Амин үзүүлэлт
                             bloodPressure: item.healthIndicators?.bloodPressure || '',
                             heartRate: item.healthIndicators?.heartRate || '',
                             temperature: item.healthIndicators?.temperature || '',
                             weight: item.healthIndicators?.weight || '',
                             height: item.healthIndicators?.height || '',
-
-                            // Үзлэгийн түүх
-                            previousExaminations: JSON.stringify(item.examinations || []),
-                            
-                            // Эмчилгээний түүх
-                            previousTreatments: JSON.stringify(item.treatments || []),
-                            
-                            // Өвчний түүх
-                            medicalHistory: JSON.stringify(item.medicalHistory || []),
-
-                            // Шилжих тохиргоо
-                            selected: 'true',
-                            skipSelection: 'true',
-                            directExamination: 'true',
-                            fromCustomerList: 'true',
-                            
-                            // Шинэ үзлэгийн анхны утгууд
-                            examinationDate: new Date().toISOString().split('T')[0],
-                            examinationType: 'new',
-                            status: 'active'
+                            skipSelection: 'true', // Сонголтыг алгасах тохиргоо
+                            directExamination: 'true', // Шууд үзлэг хийх тохиргоо
                           });
                           router.push(`/examination/newExamination?${params.toString()}`);
                         }}
@@ -483,8 +462,8 @@ export default function Customer() {
                           minWidth: '100px',
                           bgcolor: 'primary.main',
                           '&:hover': {
-                            bgcolor: 'primary.dark'
-                          }
+                            bgcolor: 'primary.dark',
+                          },
                         }}
                       >
                         Үзлэг хийх
