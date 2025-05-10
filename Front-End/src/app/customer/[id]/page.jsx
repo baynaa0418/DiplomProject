@@ -1,6 +1,7 @@
 'use client';
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { useAuth } from '../../dashboard/context/AuthContext';
 import {
   Box,
   Typography,
@@ -23,10 +24,13 @@ import {
 } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import EditIcon from '@mui/icons-material/Edit';
+import AddIcon from '@mui/icons-material/Add';
 
 export default function CustomerDetail({ params }) {
   const router = useRouter();
-  const { id } = React.use(params); // Fixed: Properly unwrap params
+  const { user, token } = useAuth();
+  const unwrappedParams = React.use(params);
+  const { id } = unwrappedParams;
 
   const [customer, setCustomer] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -37,45 +41,96 @@ export default function CustomerDetail({ params }) {
   const [snackbarSeverity, setSnackbarSeverity] = useState('error');
 
   useEffect(() => {
+    if (!id) {
+      setError('Үйлчлүүлэгчийн ID олдсонгүй');
+      setLoading(false);
+      return;
+    }
+
+    // Check if user has required role
+    if (!user || !token) {
+      setError('Нэвтрэх шаардлагатай');
+      router.push('/authentication/login');
+      return;
+    }
+
+    // Check if user has required role
+    if (user.role !== 'Admin' && user.role !== 'MedicalStaff' && user.role !== 'doctor') {
+      setError('Энэ хуудсыг харах эрхгүй байна');
+      setLoading(false);
+      return;
+    }
+
     const fetchCustomerData = async () => {
       try {
-        const token = localStorage.getItem('token');
-        
-        if (!token) {
-          throw new Error('Нэвтрэх шаардлагатай');
-        }
-  
-        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/patient/${id}`, {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/api/patient/${id}`, {
+          method: 'GET',
           headers: {
             'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
           },
+          credentials: 'include'
         });
-  
-        if (response.status === 401) {
-          localStorage.removeItem('token');
-          throw new Error('Хандах эрх хүчингүй');
+
+        if (!response.ok) {
+          if (response.status === 401) {
+            setError('Токен хүчинтэй хугацаа дууссан. Дахин нэвтрэх хуудас руу шилжинэ үү.');
+            router.push('/authentication/login');
+            return;
+          }
+          if (response.status === 403) {
+            setError('Энэ хуудсыг харах эрхгүй байна');
+            setLoading(false);
+            return;
+          }
+          if (response.status === 404) {
+            setError('Үйлчлүүлэгч олдсонгүй');
+            setLoading(false);
+            return;
+          }
+          throw new Error('Өгөгдөл татахад алдаа гарлаа');
         }
-  
+
         const data = await response.json();
-        setCustomer(data);
-      } catch (err) {
-        setError(err.message);
-        if (err.message.includes('Нэвтрэх') || err.message.includes('Хандах')) {
-          router.push('/login');
-        }
+        setCustomer(data.data);
+      } catch (error) {
+        console.error('API Error:', error);
+        setError('Өгөгдөл татахад алдаа гарлаа. Дараа дахин оролдоно уу.');
       } finally {
         setLoading(false);
       }
     };
   
     fetchCustomerData();
-  }, [id, router]);
+  }, [id, router, token, user]);
   const handleBack = () => {
     router.push('/dashboard/customer');
   };
 
   const handleEdit = () => {
     router.push(`/customer/edit/${id}`);
+  };
+
+  const handleNewExamination = () => {
+    if (!customer) return;
+    
+    const params = new URLSearchParams({
+      patientId: id,
+      customerName: `${customer.lastName || ''} ${customer.firstName || ''}`.trim(),
+      customerType: customer.type || '',
+      customerPhone: customer.phone || '',
+      lastName: customer.lastName || '',
+      firstName: customer.firstName || '',
+      registerNum: customer.registerNum || '',
+      birthDate: customer.birthDate || '',
+      gender: customer.gender || '',
+      age: customer.age || '',
+      school: customer.school || '',
+      profession: customer.profession || '',
+      address: customer.address || ''
+    });
+    
+    router.push(`/examination/newExamination?${params.toString()}`);
   };
 
   const handleTabChange = (event, newValue) => {
@@ -154,14 +209,24 @@ export default function CustomerDetail({ params }) {
         >
           Буцах
         </Button>
-        <Button
-          variant="contained"
-          startIcon={<EditIcon />}
-          onClick={handleEdit}
-          sx={{ textTransform: 'none' }}
-        >
-          Засах
-        </Button>
+        <Box>
+          <Button
+            variant="contained"
+            startIcon={<AddIcon />}
+            onClick={handleNewExamination}
+            sx={{ textTransform: 'none', mr: 2 }}
+          >
+            Үзлэг хийх
+          </Button>
+          <Button
+            variant="contained"
+            startIcon={<EditIcon />}
+            onClick={handleEdit}
+            sx={{ textTransform: 'none' }}
+          >
+            Засах
+          </Button>
+        </Box>
       </Box>
 
       {/* Customer Info */}

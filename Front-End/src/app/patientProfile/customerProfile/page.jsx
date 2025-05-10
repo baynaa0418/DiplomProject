@@ -216,9 +216,12 @@ export default function PatientProfile() {
   useEffect(() => {
     if (user === null) return;
     if (!user) {
-      router.push('/patientProfile/customerProfile');
+      router.push('/authentication/login');
     } else if (user.role !== 'patient') {
       router.push('/unauthorized');
+    } else {
+      const data = getDynamicCustomerData(user);
+      setCustomer(data);
     }
   }, [user, router]);
 
@@ -401,6 +404,8 @@ export default function PatientProfile() {
         <Divider sx={{ mb: 2 }} />
         
         <TextField
+          id="search-field"
+          name="search"
           label="Хайх"
           variant="outlined"
           value={searchQuery}
@@ -480,115 +485,135 @@ export default function PatientProfile() {
       maxWidth="lg" 
       sx={{ 
         p: { xs: 1, sm: 2 },
-        height: '100vh',
+        height: '100%',
         display: 'flex',
-        flexDirection: 'column',
-        overflow: 'hidden'
+        flexDirection: 'column'
       }}
     >
-      <Box sx={{ mb: 2 }}>
-        <IconButton onClick={() => router.back()}>
-          <ArrowBackIcon />
-        </IconButton>
-        <Typography variant="h5" gutterBottom>Өвчтөний дэлгэрэнгүй</Typography>
-      </Box>
-
-      <Box 
-        ref={pdfRef} 
-        sx={{ 
-          flex: 1,
-          display: 'flex',
-          flexDirection: 'column',
-          overflow: 'hidden',
-          border: '1px solid #eee',
-          borderRadius: '8px',
-          p: { xs: 1, sm: 2 },
-          backgroundColor: 'background.paper'
-        }}
-      >
-        <Tabs 
-          value={tabValue} 
-          onChange={handleTabChange}
-          sx={{ mb: 2 }}
-          variant="scrollable"
-          scrollButtons="auto"
-          TabIndicatorProps={{
-            style: {
-              backgroundColor: 'primary.main'
-            }
-          }}
-        >
-          <Tab label="Амин үзүүлэлт" />
-          <Tab label="Өвчний түүх" />
-          <Tab label="Эмчилгээний түүх" />
-          <Tab label="Үзлэгийн түүх" />
-          <Box sx={{ display: 'flex', alignItems: 'center', ml: 'auto' }}>
+      <Box sx={{ 
+        width: '100%',
+        height: '100%'
+      }}>
+        <Box ref={pdfRef} sx={{ width: '100%' }}>
+          {/* Header */}
+          <Box sx={{ 
+            display: 'flex', 
+            justifyContent: 'space-between', 
+            alignItems: 'center', 
+            mb: 3, 
+            width: '100%',
+            position: 'sticky',
+            top: 0,
+            backgroundColor: 'background.paper',
+            zIndex: 1,
+            pt: 2,
+            pb: 2
+          }}>
+            <Button
+              startIcon={<ArrowBackIcon />}
+              onClick={() => router.back()}
+              sx={{ textTransform: 'none' }}
+            >
+              Буцах
+            </Button>
             <IconButton onClick={handleMenuOpen}>
               <PictureAsPdfIcon />
             </IconButton>
+            <Menu
+              anchorEl={anchorEl}
+              open={Boolean(anchorEl)}
+              onClose={handleMenuClose}
+            >
+              <MenuItem onClick={downloadPDF}>PDF татах</MenuItem>
+            </Menu>
           </Box>
-        </Tabs>
 
-        <Menu 
-          anchorEl={anchorEl} 
-          open={Boolean(anchorEl)} 
-          onClose={handleMenuClose}
-          anchorOrigin={{
-            vertical: 'bottom',
-            horizontal: 'right',
-          }}
-          transformOrigin={{
-            vertical: 'top',
-            horizontal: 'right',
-          }}
-        >
-          <MenuItem onClick={downloadPDF}>PDF татах</MenuItem>
-        </Menu>
+          <Tabs 
+            value={tabValue} 
+            onChange={handleTabChange}
+            sx={{ 
+              mb: 2,
+              position: 'sticky',
+              top: '64px',
+              backgroundColor: 'background.paper',
+              zIndex: 1,
+              pt: 2,
+              pb: 2
+            }}
+            variant="scrollable"
+            scrollButtons="auto"
+            TabIndicatorProps={{
+              style: {
+                backgroundColor: 'primary.main'
+              }
+            }}
+          >
+            <Tab label="Амин үзүүлэлт" />
+            <Tab label="Өвчний түүх" />
+            <Tab label="Эмчилгээний түүх" />
+            <Tab label="Үзлэгийн түүх" />
+          </Tabs>
 
-        {customer && (
+          {customer && (
+            <Box sx={{ 
+              mb: 3, 
+              p: 2, 
+              border: '1px solid #eee', 
+              borderRadius: '8px'
+            }}>
+              <Typography variant="h6" gutterBottom>Үндсэн мэдээлэл</Typography>
+              <Divider sx={{ mb: 2 }} />
+              <Stack direction="row" spacing={4} sx={{ mt: 1, flexWrap: 'wrap' }}>
+                <Box sx={{ width: { xs: '100%', sm: '45%' }, mb: 2 }}>
+                  <Typography variant="body2" color="text.secondary">Нэр</Typography>
+                  <Typography>{customer.name}</Typography>
+                </Box>
+                <Box sx={{ width: { xs: '100%', sm: '45%' }, mb: 2 }}>
+                  <Typography variant="body2" color="text.secondary">Төрсөн огноо</Typography>
+                  <Typography>{customer.birthDate}</Typography>
+                </Box>
+                <Box sx={{ width: { xs: '100%', sm: '45%' }, mb: 2 }}>
+                  <Typography variant="body2" color="text.secondary">Нас</Typography>
+                  <Typography>{customer.age}</Typography>
+                </Box>
+                <Box sx={{ width: { xs: '100%', sm: '45%' }, mb: 2 }}>
+                  <Typography variant="body2" color="text.secondary">Төрөл</Typography>
+                  <Typography>{customer.type}</Typography>
+                </Box>
+                <Box sx={{ width: { xs: '100%', sm: '45%' }, mb: 2 }}>
+                  <Typography variant="body2" color="text.secondary">Утас</Typography>
+                  <Typography>{customer.phone}</Typography>
+                </Box>
+                <Box sx={{ width: { xs: '100%', sm: '100%' }, mb: 2 }}>
+                  <Typography variant="body2" color="text.secondary">Хаяг</Typography>
+                  <Typography>{customer.address}</Typography>
+                </Box>
+              </Stack>
+            </Box>
+          )}
+
           <Box sx={{ 
-            mb: 3, 
-            p: 2, 
-            border: '1px solid #eee', 
-            borderRadius: '8px'
+            flex: 1,
+            overflowY: 'auto',
+            pb: 2,
+            maxHeight: 'calc(100vh - 300px)',
+            '&::-webkit-scrollbar': {
+              width: '8px',
+            },
+            '&::-webkit-scrollbar-track': {
+              background: '#f1f1f1',
+              borderRadius: '4px',
+            },
+            '&::-webkit-scrollbar-thumb': {
+              background: '#888',
+              borderRadius: '4px',
+              '&:hover': {
+                background: '#555',
+              },
+            },
           }}>
-            <Typography variant="h6" gutterBottom>Үндсэн мэдээлэл</Typography>
-            <Divider sx={{ mb: 2 }} />
-            <Stack direction="row" spacing={4} sx={{ mt: 1, flexWrap: 'wrap' }}>
-              <Box sx={{ width: { xs: '100%', sm: '45%' }, mb: 2 }}>
-                <Typography variant="body2" color="text.secondary">Нэр</Typography>
-                <Typography>{customer.name}</Typography>
-              </Box>
-              <Box sx={{ width: { xs: '100%', sm: '45%' }, mb: 2 }}>
-                <Typography variant="body2" color="text.secondary">Төрсөн огноо</Typography>
-                <Typography>{customer.birthDate}</Typography>
-              </Box>
-              <Box sx={{ width: { xs: '100%', sm: '45%' }, mb: 2 }}>
-                <Typography variant="body2" color="text.secondary">Нас</Typography>
-                <Typography>{customer.age}</Typography>
-              </Box>
-              <Box sx={{ width: { xs: '100%', sm: '45%' }, mb: 2 }}>
-                <Typography variant="body2" color="text.secondary">Төрөл</Typography>
-                <Typography>{customer.type}</Typography>
-              </Box>
-              <Box sx={{ width: { xs: '100%', sm: '45%' }, mb: 2 }}>
-                <Typography variant="body2" color="text.secondary">Утас</Typography>
-                <Typography>{customer.phone}</Typography>
-              </Box>
-              <Box sx={{ width: { xs: '100%', sm: '100%' }, mb: 2 }}>
-                <Typography variant="body2" color="text.secondary">Хаяг</Typography>
-                <Typography>{customer.address}</Typography>
-              </Box>
-            </Stack>
+            {renderTabContent()}
           </Box>
-        )}
-
-        <Box sx={{ 
-          flex: 1,
-          overflowY: 'auto',
-          pb: 2
-        }}>
-          {renderTabContent()}
         </Box>
       </Box>
     </Container>

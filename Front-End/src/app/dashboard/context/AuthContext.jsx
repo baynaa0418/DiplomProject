@@ -17,24 +17,14 @@ export const AuthProvider = ({ children }) => {
         const storedToken = localStorage.getItem('token');
         
         if (userData && storedToken) {
-          // Token-ийг шалгах
-          const response = await fetch('http://localhost:8000/api/auth/verify', {
-            headers: {
-              Authorization: `Bearer ${storedToken}`
-            }
-          });
-
-          if (response.ok) {
-            setUser(JSON.parse(userData));
-            setToken(storedToken);
-          } else {
-            // Token хүчинтэй биш бол localStorage-оос устгах
-            localStorage.removeItem('user');
-            localStorage.removeItem('token');
-            setUser(null);
-            setToken(null);
-            router.push('/authentication/login');
-          }
+          // Token exists, set the user and token
+          setUser(JSON.parse(userData));
+          setToken(storedToken);
+        } else {
+          // No token or user data, redirect to login
+          setUser(null);
+          setToken(null);
+          router.push('/authentication/login');
         }
       } catch (error) {
         console.error('Нэвтрэлт шалгахад алдаа гарлаа:', error);

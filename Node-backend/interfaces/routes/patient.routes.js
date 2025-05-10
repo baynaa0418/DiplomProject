@@ -17,25 +17,54 @@ import {
   getPrescriptionGuidesList,
   getPrescriptionMedsList,
 } from "../controller/medicalstaff.controller.js";
+import Patient from "../../domain/models/Patient.model.js";
 
 const router = express.Router();
 
 // Бүх үйлчлүүлэгчдийг авах public route
 router.get("/", PatientController.getAllPatients);
 
-// Шинээр нэмэх: ID-р үйлчлүүлэгч авах route
-router.get(
-  "/:id",
-  authenticateJWT,
-  authorizeRole(["Admin", "MedicalStaff"]),
-  getPatientById
-);
-
+// Бүх үйлчлүүлэгчдийг авах route
 router.get(
   "/view",
   authenticateJWT,
   authorizeRole(["Admin", "MedicalStaff"]),
-  listAllPatients
+  async (req, res) => {
+    try {
+      const patients = await Patient.find().select('-password');
+      res.status(200).json({
+        message: "Read successfully!",
+        data: patients
+      });
+    } catch (error) {
+      const status = error.statusCode || 500;
+      const message = error.message || "Internal server error";
+      res.status(status).json({ error: message });
+    }
+  }
+);
+
+// ID-р үйлчлүүлэгч авах route
+router.get(
+  "/:id",
+  authenticateJWT,
+  authorizeRole(["Admin", "MedicalStaff"]),
+  async (req, res) => {
+    try {
+      const patient = await Patient.findById(req.params.id).select('-password');
+      if (!patient) {
+        return res.status(404).json({ error: 'Үйлчлүүлэгч олдсонгүй' });
+      }
+      res.status(200).json({
+        message: "Read successfully!",
+        data: patient
+      });
+    } catch (error) {
+      const status = error.statusCode || 500;
+      const message = error.message || "Internal server error";
+      res.status(status).json({ error: message });
+    }
+  }
 );
 
 router.get(

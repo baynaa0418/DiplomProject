@@ -84,7 +84,7 @@ export default function CreateExaminationPage() {
       }
 
       try {
-        const response = await fetch('http://localhost:8000/api/patient', {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/api/patients`, {
           headers: {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${token}`

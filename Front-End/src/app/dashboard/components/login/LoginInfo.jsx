@@ -22,7 +22,7 @@ const LoginInfo = () => {
             alt="MUIS Logo"
             width={330}
             height={150}
-            style={{ maxWidth: "100%", height: "auto" }}
+            style={{ maxWidth: "100%", height: "auto", width: "auto" }}
             priority
           />
         </Grid>
@@ -34,7 +34,7 @@ const LoginInfo = () => {
             alt="Doctor"
             width={150}
             height={290}
-            style={{ maxWidth: "100%", height: "auto" }}
+            style={{ maxWidth: "100%", height: "auto", width: "auto" }}
           />
         </Grid>
 

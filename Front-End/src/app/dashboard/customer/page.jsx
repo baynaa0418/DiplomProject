@@ -48,10 +48,15 @@ import { useRouter } from 'next/navigation';
 const initialCustomers = [
   {
     id: 1,
-    name: 'Батбаяр Ариунболд',
+    lastName: 'Батбаяр',
+    firstName: 'Ариунболд',
+    registerNum: 'УБ12345678',
     birthDate: '2001/07/06',
     age: 23,
     type: 'Оюутан',
+    school: 'ШУТИС',
+    profession: 'Программ хөгжүүлэгч',
+    gender: 'Эрэгтэй',
     address: 'УБ, 3-р хороо, Даваа салбар, ...',
     phone: '9921 8857',
     healthIndicators: {
@@ -76,10 +81,15 @@ const initialCustomers = [
   },
   {
     id: 2,
-    name: 'Нямсүрэн Зоригоо',
+    lastName: 'Нямсүрэн',
+    firstName: 'Зоригоо',
+    registerNum: 'УБ87654321',
     birthDate: '2001/07/06',
     age: 23,
     type: 'Оюутан',
+    school: 'МУИС',
+    profession: 'Эдийн засагч',
+    gender: 'Эмэгтэй',
     address: 'Дархан, Хороолол, Гудамж, Байр, ...',
     phone: '8015 8665',
     healthIndicators: {
@@ -102,10 +112,15 @@ const initialCustomers = [
   },
   {
     id: 3,
-    name: 'Батбаяр Ганжигүүр',
+    lastName: 'Батбаяр',
+    firstName: 'Ганжигүүр',
+    registerNum: 'УБ23456789',
     birthDate: '2001/07/06',
     age: 23,
     type: 'Оюутан',
+    school: 'МУБИС',
+    profession: 'Эрх зүйч',
+    gender: 'Эрэгтэй',
     address: 'УБ, 5-р хороо, Байр, Тоот',
     phone: '9911 1234',
     healthIndicators: {
@@ -126,10 +141,15 @@ const initialCustomers = [
   },
   {
     id: 4,
-    name: 'Батмэнд Мөнххүлэг',
+    lastName: 'Батмэнд',
+    firstName: 'Мөнххүлэг',
+    registerNum: 'УБ34567890',
     birthDate: '2001/07/06',
     age: 23,
     type: 'Багш',
+    school: 'МУИС',
+    profession: 'Математикийн багш',
+    gender: 'Эрэгтэй',
     address: 'Дархан, Хороолол, Гудамж, Байр, Тоот',
     phone: '8888 8001',
     healthIndicators: {
@@ -152,10 +172,15 @@ const initialCustomers = [
   },
   {
     id: 5,
-    name: 'Лувсандорж Ганбаатар',
+    lastName: 'Лувсандорж',
+    firstName: 'Ганбаатар',
+    registerNum: 'УБ45678901',
     birthDate: '2001/07/06',
     age: 23,
     type: 'Ажилтан',
+    school: 'МУИС',
+    profession: 'Санхүүгийн мэргэжилтэн',
+    gender: 'Эрэгтэй',
     address: 'Дархан, Хороолол, Гудамж, Байр, Тоот',
     phone: '8088 8001',
     healthIndicators: {
@@ -173,7 +198,7 @@ const initialCustomers = [
       { year: '2019', description: 'Цусны шинжилгээ' },
       { year: '2021', description: 'Харшлын шинжилгээ' }
     ]
-  },
+  }
 ];
 
 export default function Customer() {
@@ -215,7 +240,8 @@ export default function Customer() {
 
   // Filter data based on the selected tab
   const filteredCustomers = customers.filter((item) => {
-    const matchesSearch = item.name.toLowerCase().includes(searchTerm.toLowerCase());
+    const fullName = `${item.lastName} ${item.firstName}`.toLowerCase();
+    const matchesSearch = fullName.includes(searchTerm.toLowerCase());
     
     if (!matchesSearch) return false;
     
@@ -262,7 +288,7 @@ export default function Customer() {
   };
   
   const handleViewDetails = (customer) => {
-    router.push(`/dashboard/customer/customerDetailView/${customer.id}`);
+    router.push(`/customer/${customer.id}`);
     handleCloseMenu();
   };
   
@@ -375,36 +401,94 @@ export default function Customer() {
               </TableRow>
             </TableHead>
             <TableBody>
-              {currentPageData.map((item) => {
-                const { lastName, firstName } = getNameParts(item.name);
-                return (
-                  <TableRow 
-                    key={item.id}
-                    sx={{ '&:hover': { backgroundColor: '#f9f9f9' } }}
-                  >
-                    <TableCell>
-                      <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                        <Avatar 
-                          sx={{ 
-                            mr: 2, 
-                            width: 36, 
-                            height: 36, 
-                            bgcolor: 'primary.main',
-                            fontSize: '14px',
-                            fontWeight: 'medium'
-                          }}
-                        >
-                          {item.name.charAt(0)}
-                        </Avatar>
-                        {item.name}
-                      </Box>
-                    </TableCell>
-                    <TableCell>{item.birthDate}</TableCell>
-                    <TableCell>{item.age}</TableCell>
-                    <TableCell>{item.type}</TableCell>
-                    <TableCell>{item.address}</TableCell>
-                    <TableCell>{item.phone}</TableCell>
-                    <TableCell align="right">
+              {currentPageData.map((item) => (
+                <TableRow 
+                  key={item.id}
+                  sx={{ '&:hover': { backgroundColor: '#f9f9f9' } }}
+                >
+                  <TableCell>
+                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                      <Avatar 
+                        sx={{ 
+                          mr: 2, 
+                          width: 36, 
+                          height: 36, 
+                          bgcolor: 'primary.main',
+                          fontSize: '14px',
+                          fontWeight: 'medium'
+                        }}
+                      >
+                        {item.lastName.charAt(0)}
+                      </Avatar>
+                      {`${item.lastName} ${item.firstName}`}
+                    </Box>
+                  </TableCell>
+                  <TableCell>{item.birthDate}</TableCell>
+                  <TableCell>{item.age}</TableCell>
+                  <TableCell>{item.type}</TableCell>
+                  <TableCell>{item.address}</TableCell>
+                  <TableCell>{item.phone}</TableCell>
+                  <TableCell align="right">
+                    <Box sx={{ display: 'flex', gap: 1, justifyContent: 'flex-end' }}>
+                      <Button
+                        variant="contained"
+                        size="small"
+                        onClick={() => {
+                          const params = new URLSearchParams({
+                            // Үйлчлүүлэгчийн үндсэн мэдээлэл
+                            patientId: item.id,
+                            lastName: item.lastName || '',
+                            firstName: item.firstName || '',
+                            registerNum: item.registerNum || '',
+                            birthDate: item.birthDate || '',
+                            gender: item.gender || '',
+                            age: item.age || '',
+                            school: item.school || '',
+                            profession: item.profession || '',
+                            type: item.type || '',
+                            phone: item.phone || '',
+                            address: item.address || '',
+
+                            // Амин үзүүлэлт
+                            bloodPressure: item.healthIndicators?.bloodPressure || '',
+                            heartRate: item.healthIndicators?.heartRate || '',
+                            temperature: item.healthIndicators?.temperature || '',
+                            weight: item.healthIndicators?.weight || '',
+                            height: item.healthIndicators?.height || '',
+
+                            // Үзлэгийн түүх
+                            previousExaminations: JSON.stringify(item.examinations || []),
+                            
+                            // Эмчилгээний түүх
+                            previousTreatments: JSON.stringify(item.treatments || []),
+                            
+                            // Өвчний түүх
+                            medicalHistory: JSON.stringify(item.medicalHistory || []),
+
+                            // Шилжих тохиргоо
+                            selected: 'true',
+                            skipSelection: 'true',
+                            directExamination: 'true',
+                            fromCustomerList: 'true',
+                            
+                            // Шинэ үзлэгийн анхны утгууд
+                            examinationDate: new Date().toISOString().split('T')[0],
+                            examinationType: 'new',
+                            status: 'active'
+                          });
+                          router.push(`/examination/newExamination?${params.toString()}`);
+                        }}
+                        sx={{ 
+                          textTransform: 'none',
+                          minWidth: '100px',
+                          bgcolor: 'primary.main',
+                          '&:hover': {
+                            bgcolor: 'primary.dark'
+                          }
+                        }}
+                      >
+                        Үзлэг хийх
+                      </Button>
                       <IconButton 
                         size="small" 
                         onClick={(e) => handleMoreClick(e, item)}
@@ -417,10 +501,10 @@ export default function Customer() {
                       >
                         <MoreVertIcon />
                       </IconButton>
-                    </TableCell>
-                  </TableRow>
-                );
-              })}
+                    </Box>
+                  </TableCell>
+                </TableRow>
+              ))}
             </TableBody>
           </Table>
         </TableContainer>
@@ -464,22 +548,6 @@ export default function Customer() {
           >
             <VisibilityOutlinedIcon fontSize="small" color="info" />
             <Typography>Дэлгэрэнгүй харах</Typography>
-          </MenuItem>
-          <MenuItem 
-            onClick={() => {
-              router.push(`/examination/newExamination?customerId=${selectedCustomer.id}&customerName=${encodeURIComponent(selectedCustomer.name)}&customerType=${encodeURIComponent(selectedCustomer.type)}&customerPhone=${encodeURIComponent(selectedCustomer.phone)}`);
-              handleCloseMenu();
-            }}
-            sx={{ 
-              gap: 1,
-              py: 1,
-              '&:hover': { 
-                bgcolor: 'rgba(25, 118, 210, 0.08)' 
-              }
-            }}
-          >
-            <VisibilityOutlinedIcon fontSize="small" color="info" />
-            <Typography>Үзлэг хийх</Typography>
           </MenuItem>
           <MenuItem 
             onClick={handleEdit}
